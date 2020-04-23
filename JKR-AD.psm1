@@ -150,6 +150,7 @@ function Get-InactiveComputers {
             $Row | Add-Member -MemberType noteproperty -Name "Last Logon" -Value $DomainPC.LastLogonDate
             $Row | Add-Member -MemberType noteproperty -Name "Date Created" -Value $DomainPC.whenCreated
             $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
+            $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $DomainPC.Enabled
 
             $InactiveReport += $Row
 
@@ -359,6 +360,9 @@ function Get-ADComputerWindows10FriendlyName {
 
             $OSFriendlyName = $NULL
 
+            if ($PCinfo.OperatingSystemVersion -eq '10.0 (18363)') {
+                $OSFriendlyName = 'Windows 10 1909'
+            }
             if ($PCinfo.OperatingSystemVersion -eq '10.0 (18362)') {
                 $OSFriendlyName = 'Windows 10 1903'
             }
@@ -661,8 +665,8 @@ function Get-ADuserUACIssues {
 
         foreach ($User6 in $CannotChangePassword) {
             $Row = New-Object PSObject
-            $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User5.SamAccountName
-            $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User5.Enabled
+            $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User6.SamAccountName
+            $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User6.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'User Cannot Change Password'
 
             $ADUserUACIssues += $Row
@@ -720,6 +724,194 @@ function Get-ADAccountLockouts {
 
     END { 
         $LockedUsers
+    } #END
+
+} #FUNCTION
+
+
+function Get-WDSPrestagedComputers {
+    <#
+        .SYNOPSIS
+            Gtes a list of WDS Deployed PC's, or PC's that have been pre-staged for a deployment
+        .DESCRIPTION
+            Checked AD for PC's with a NetbootGUID and lists them our
+        .EXAMPLE
+            Get-WDSPrestagedComputers
+    #>
+    [CmdletBinding()]
+    Param(
+        
+    ) 
+    BEGIN { 
+
+    } #BEGIN
+
+    PROCESS {
+        Get-ADComputer -Filter { NetbootGUID -like "*" } -Properties NetbootGUID, created # | Select-Object -Property name, distinguishedName, created, NetbootGUID
+    } #PROCESS
+
+    END { 
+
+    } #END
+
+} #FUNCTION
+
+
+function Clear-WDSPrestagedComputers {
+    <#
+        .SYNOPSIS
+            Gets WDS PreStaged PC's and cleared the NetbootGUID
+        .DESCRIPTION
+            Queries AD for PreStaged PC's, and then cleard the NetbootGUID if it falls in the date range specified
+        .PARAMETER Days
+            Number of Days in the past to search for PC's with a NetbootGUID
+        .EXAMPLE
+            Clear-WDSPrestagedComputers -Days 7
+    #>
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory = $true)][string]$Days    
+    ) 
+    BEGIN { 
+
+    } #BEGIN
+
+    PROCESS {
+        Get-WDSPrestagedComputers | Where-Object { $_.Created -le ((get-date).addDays(-$Days)) } | Set-ADComputer -clear NetbootGUID
+    } #PROCESS
+
+    END { 
+
+    } #END
+
+} #FUNCTION
+
+
+function Get-ADOSCount {
+    <#
+        .SYNOPSIS
+            Gets Active Directory OS Counts
+        .DESCRIPTION
+            Queries AD for PC's Operating Systems and then sorts them by the count and outputs a table
+        .PARAMETER Domain
+            Optional - Uses Current Domain if not specified
+        .EXAMPLE
+            Get-ADOSCount -Domain Test.com
+        .EXAMPLE
+            Get-ADOSCount
+    #>
+    [CmdletBinding()]
+    Param(
+        [Parameter()]$Domain
+    ) 
+    BEGIN { 
+        if ($NULL -eq $Domain) {
+            $Domain = (Get-ADDomain).DNSRoot
+        }
+    } #BEGIN
+
+    PROCESS {
+        Get-ADComputer -Filter * -Properties operatingSystem -Server $Domain | Group-Object -Property operatingSystem | Select-Object Name, Count | Sort-Object Name | Format-Table -AutoSize
+    } #PROCESS
+
+    END { 
+
+    } #END
+
+} #FUNCTION
+
+
+function Get-LAPSStatus {
+    <#
+        .SYNOPSIS
+            Gets LAPS Information for Specified Computer
+        .DESCRIPTION
+            Queries LAPS Informnation from AD Computer Object via Get-ADComputer and GET-ADObject
+        .PARAMETER ComputerName
+            Specified Computer or Computers to retrieve LAPS Information for
+        .EXAMPLE
+            Get-LAPSStatus -ComputerName SERVER01
+        .EXAMPLE
+            Get-LAPSStatus -ComputerName SERVER01,SERVER02
+    #>
+    [CmdletBinding()]
+    Param(
+        [Parameter()]$ComputerName
+    ) 
+    BEGIN { 
+        $ADComputerLAPSInfo = @()
+    } #BEGIN
+
+    PROCESS {
+        foreach ($Computer in $ComputerName) {
+            $ADObject = Get-ADObject (Get-ADComputer $Computer) -Properties ms-Mcs-AdmPwd, ms-MCS-AdmPwdExpirationTime
+            $LAPSExpirationDate = $([datetime]::FromFileTime([convert]::ToInt64($ADObject.'ms-MCS-AdmPwdExpirationTime', 10)))
+            $LAPSPassword = $ADObject.'ms-Mcs-AdmPwd'
+
+            $Row = New-Object PSObject
+            $Row | Add-Member -MemberType noteproperty -Name "Computer" -Value $Computer
+            $Row | Add-Member -MemberType noteproperty -Name "LAPSExpirationDate" -Value $LAPSExpirationDate
+            $Row | Add-Member -MemberType noteproperty -Name "LAPSPassword" -Value $LAPSPassword
+            
+            $ADComputerLAPSInfo += $Row
+
+            $NULL = $ADObject 
+            $NULL = $LAPSExpirationDate
+            $NULL = $LAPSPassword
+        }
+
+    } #PROCESS
+
+    END { 
+        $ADComputerLAPSInfo
+    } #END
+
+} #FUNCTION
+
+
+function Get-ADWindows10VersionCount {
+    <#
+        .SYNOPSIS
+            Gathers Windows 10 OS Counts
+        .DESCRIPTION
+            Queries AD for Windows 10 OS Counts
+        .PARAMETER Domain
+            Optional - Uses Current Domain if not specified
+        .EXAMPLE
+            Get-ADWindows10VersionCount -Domain Test.com
+    #>
+    [CmdletBinding()]
+    Param(
+        [Parameter()]$Domain
+    ) 
+    BEGIN { 
+        if ($NULL -eq $Domain) {
+            $Domain = (Get-ADDomain).DNSRoot
+        }
+        
+        $Windows10PCs = Get-ADComputer -Filter { OperatingSystem -Like '*Windows 10*' } -Properties * -Server $Domain
+
+        $Windows10VersionCount = @()
+    } #BEGIN
+
+    PROCESS {
+
+        $Row = New-Object PSObject
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1909" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (18363)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1903" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (18362)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1809" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (17763)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1803" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (17134)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1709" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (16299)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1703" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (15063)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1607" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (14393)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1511" -Value ($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (10586)' }).Count
+            
+        $Windows10VersionCount += $Row
+
+    } #PROCESS
+
+    END { 
+        $Windows10VersionCount
     } #END
 
 } #FUNCTION
