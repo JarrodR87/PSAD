@@ -912,7 +912,7 @@ function Get-ADServerNoStaticDNS {
     } #BEGIN
 
     PROCESS {
-        Get-ADComputer -Filter { OperatingSystem -Like '*Windows Server*' } | ForEach-Object {
+        Get-ADComputer -Filter { OperatingSystem -Like '*Windows Server*' } -Server $Domain | ForEach-Object {
             Get-DnsServerResourceRecord -ZoneName $Domain -ComputerName $DC -Name $_.Name | Where-Object { $NULL -ne $_.Timestamp }
         }
     } #PROCESS
