@@ -583,6 +583,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'No Password Expiration Set'
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -592,6 +593,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User1.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User1.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'No Password Required'
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -602,6 +604,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User2.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User2.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'Password Reversibly Encrypted'
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -611,6 +614,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User3.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User3.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'Trusted for Kerberos Delegation'
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -620,6 +624,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User4.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User4.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value "Don't Require Pre-Authentication"
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -629,6 +634,7 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User5.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User5.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'Credentials Encrypted with DES'
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
 
             $ADUserUACIssues += $Row
         }
@@ -638,7 +644,8 @@ function Get-ADuserUACIssues {
             $Row | Add-Member -MemberType noteproperty -Name "Identity" -Value $User6.SamAccountName
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $User6.Enabled
             $Row | Add-Member -MemberType noteproperty -Name "UACIssue" -Value 'User Cannot Change Password'
-
+            $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
+            
             $ADUserUACIssues += $Row
         }
         
