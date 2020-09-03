@@ -6,8 +6,6 @@ function Invoke-LocalAdminRemoval {
             Uses an Array to compare Local Admins with Local Approved Admins, and temoves those not approved
         .PARAMETER ComputerNames
             Array of Computers to prune the Local Admin Group on
-        .PARAMETER Path
-            Base Path to save the Log File to
         .PARAMETER UserstoRemove
             Users to remove from the Local Administrators Group
         .EXAMPLE
@@ -21,14 +19,7 @@ function Invoke-LocalAdminRemoval {
         [Parameter(Mandatory = $true)]$UserstoRemove
     ) 
     BEGIN { 
-        $Date = Get-Date -UFormat %b-%m-%Y 
-        $Hour = (Get-Date).Hour 
-        $Minuntes = (Get-Date).Minute
-
-        $Output += 'LocalAdminRemoval' + $Date + "-" + $Hour + "-" + $Minuntes
-
         $LocalAdminRemoval = @()
-
     } #BEGIN
 
     PROCESS {
