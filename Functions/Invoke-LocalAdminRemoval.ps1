@@ -9,9 +9,9 @@ function Invoke-LocalAdminRemoval {
         .PARAMETER UserstoRemove
             Users to remove from the Local Administrators Group
         .EXAMPLE
-            Invoke-LocalAdminRemoval -ComputerNames (Get-Content "C:\Temp\TestComputers.txt") -UserstoRemove (Get-Content "C:\Temp\TestUsers.txt") -Path '"C:\Temp\'
+            Invoke-LocalAdminRemoval -ComputerNames (Get-Content "C:\Temp\TestComputers.txt") -UserstoRemove (Get-Content "C:\Temp\TestUsers.txt")
         .EXAMPLE
-            Invoke-LocalAdminRemoval -ComputerNames (Get-ADGroupMember -Identity 'ComputerGroup').name -UserstoRemove (Get-ADGroupMember -Identity 'UserGroup').name -Path '"C:\Temp\'
+            Invoke-LocalAdminRemoval -ComputerNames (Get-ADGroupMember -Identity 'ComputerGroup').name -UserstoRemove (Get-ADGroupMember -Identity 'UserGroup').name
     #>
     [CmdletBinding()]
     Param(
