@@ -36,15 +36,15 @@ function Invoke-ExchangeHealthCheck {
 
             $Row = New-Object PSObject
             $Row | Add-Member -MemberType noteproperty -Name "ExchangeServer" -Value $ExchangeServer
-            $Row | Add-Member -MemberType noteproperty -Name "PowerShellHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/PowerShell/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "ActiveSyncHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/microsoft-server-activesync/healthcheck.htm).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "PowerShellHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/PowerShell/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "ActiveSyncHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/microsoft-server-activesync/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
             $Row | Add-Member -MemberType noteproperty -Name "AutodiscoverHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/autodiscover/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "ECPHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/ecp/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "EWSHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/ews/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "MAPIHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/mapi/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "OABHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/oab/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "OWAHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/owa/healthcheck.htm).statusCode -eq 200))
-            $Row | Add-Member -MemberType noteproperty -Name "RPCHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/rpc/healthcheck.htm).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "ECPHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/ecp/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "EWSHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/ews/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "MAPIHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/mapi/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "OABHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/oab/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "OWAHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/owa/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
+            $Row | Add-Member -MemberType noteproperty -Name "RPCHealthCheck" -Value ([bool]((invoke-webrequest $BaseURL/rpc/healthcheck.htm -UseBasicParsing).statusCode -eq 200))
 
 
             $ExchangeActivePowerShellServers += $Row
