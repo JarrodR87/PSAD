@@ -18,7 +18,7 @@ function Get-ADWindows10VersionCount {
             $Domain = (Get-ADDomain).DNSRoot
         }
         
-        $Windows10PCs = Get-ADComputer -Filter { OperatingSystem -Like '*Windows 10*' } -Properties * -Server $Domain
+        $Windows10PCs = Get-ADComputer -Filter { OperatingSystem -Like '*Windows 10*' } -Properties OperatingSystemVersion -Server $Domain
 
         $Windows10VersionCount = @()
     } #BEGIN
