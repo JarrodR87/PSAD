@@ -44,6 +44,5 @@ function Get-ADWindows10VersionCount {
     END { 
         $Windows10VersionCount
     } #END
-
->>>>>>> c68b21029c0fefa1e215713cdaddf80f0a8574e4
+    
 } #FUNCTION
