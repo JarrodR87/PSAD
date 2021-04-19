@@ -22,7 +22,7 @@ function Get-ADOSCount {
     } #BEGIN
 
     PROCESS {
-        Get-ADComputer -Filter * -Properties operatingSystem -Server $Domain | Group-Object -Property operatingSystem | Select-Object Name, Count | Sort-Object Name | Format-Table -AutoSize
+        Get-ADComputer -Filter * -Properties operatingSystem -Server $Domain | Group-Object -Property operatingSystem | Select-Object Name, Count | Sort-Object Name
     } #PROCESS
 
     END { 
