@@ -25,7 +25,7 @@ function Get-ServerList {
     } #BEGIN
 
     PROCESS {
-        $Servers = Get-ADComputer -Filter { OperatingSystem -Like '*Windows Server*' } -Property * -Server $Domain
+        $Servers = Get-ADComputer -Filter { OperatingSystem -Like '*Windows Server*' } -Properties CN,Location,Description,OperatingSystem -Server $Domain
 
         Foreach ($Server in $Servers) {
 
