@@ -18,7 +18,7 @@ function Get-ADWindows10VersionCount {
             $Domain = (Get-ADDomain).DNSRoot
         }
         
-        $Windows10PCs = Get-ADComputer -Filter { OperatingSystem -Like '*Windows 10*' } -Properties OperatingSystemVersion -Server $Domain
+        $Windows10PCs = Get-ADComputer -Filter { (OperatingSystem -Like '*Windows 10*') -and (Enabled -eq $TRUE) } -Properties OperatingSystemVersion -Server $Domain
 
         $Windows10VersionCount = @()
     } #BEGIN
@@ -26,6 +26,9 @@ function Get-ADWindows10VersionCount {
     PROCESS {
 
         $Row = New-Object PSObject
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 22H2" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (19045)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 21H2" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (19044)' }).Count
+        $Row | Add-Member -MemberType noteproperty -Name "Windows 10 21H1" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (19043)' }).Count
         $Row | Add-Member -MemberType noteproperty -Name "Windows 10 20H2" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (19042)' }).Count
         $Row | Add-Member -MemberType noteproperty -Name "Windows 10 20H1" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (19041)' }).Count
         $Row | Add-Member -MemberType noteproperty -Name "Windows 10 1909" -Value @($Windows10PCs | Where-Object -filter { $_.OperatingSystemVersion -Like '10.0 (18363)' }).Count
