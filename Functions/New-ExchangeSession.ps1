@@ -1,9 +1,9 @@
 function New-ExchangeSession {
     <#
         .SYNOPSIS
-            Connects to KPD Exchange 2016 PowerShell
+            Connects to Exchange 2016 PowerShell
         .DESCRIPTION
-            Connects to KPDEXCH01 to access Exchange PowerShell Cmdlets and imports the Session to the current PowerShell Session
+            Connects to Exchange PowerShell Cmdlets and imports the Session to the current PowerShell Session
         .PARAMETER ExchangeServers
             Exchange Servers that will accept a PowerShell Connection
         .PARAMETER Protocol

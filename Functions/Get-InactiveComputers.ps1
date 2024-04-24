@@ -31,7 +31,7 @@ function Get-InactiveComputers {
     } #BEGIN
 
     PROCESS {
-        $DomainReport = Get-ADComputer -Filter { LastLogonTimeStamp -lt $time } -Properties * -Server $Domain
+        $DomainReport = Get-ADComputer -Filter { (LastLogonTimeStamp -lt $time) -and (Enabled -eq 'True') } -Properties CN, DistinguishedName, LastLogonDate, whenCreated, Enabled, OperatingSystem, Description -Server $Domain
 
         Foreach ($DomainPC in $DomainReport) {
             $Row = New-Object PSObject
@@ -41,15 +41,17 @@ function Get-InactiveComputers {
             $Row | Add-Member -MemberType noteproperty -Name "Date Created" -Value $DomainPC.whenCreated
             $Row | Add-Member -MemberType noteproperty -Name "Domain" -Value $Domain
             $Row | Add-Member -MemberType noteproperty -Name "Enabled" -Value $DomainPC.Enabled
+            $Row | Add-Member -MemberType noteproperty -Name "OperatingSystem" -Value $DomainPC.OperatingSystem
+            $Row | Add-Member -MemberType noteproperty -Name "Description" -Value $DomainPC.Description
 
             $InactiveReport += $Row
 
         }
-        $InactiveReport
+
     } #PROCESS
    
     END { 
-
+        $InactiveReport
     } #END
 
 } #FUNCTION
